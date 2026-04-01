@@ -9,7 +9,8 @@ from src.config import SECTOR_BENCHMARKS, SECTOR_STOCKS
 from src.data_loader import download_close_prices, get_company_summary
 from src.optimizer import optimize_portfolio
 from src.reporting import save_base100_chart, save_price_chart
-
+from src.optimizer import simulate_random_portfolios, compute_efficient_frontier
+from src.visualization import plot_efficient_frontier
 
 def run_sector_analysis(
     sector: str = "Technology",
@@ -34,7 +35,9 @@ def run_sector_analysis(
     betas = compute_betas(asset_returns, benchmark_returns)
     company_summary = get_company_summary(tickers)
     weights, allocation = optimize_portfolio(asset_returns, risk_profile, amount)
-
+    portfolios = simulate_random_portfolios(asset_returns)
+    frontier = compute_efficient_frontier(asset_returns)
+    plot_efficient_frontier(portfolios, frontier)
     output_dir = Path("outputs")
     save_price_chart(asset_prices, output_dir / "prices.png", f"{sector} sector stock prices")
     save_base100_chart(base100, output_dir / "base100.png", f"{sector} sector performance (base 100)")
